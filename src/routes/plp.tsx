@@ -133,7 +133,7 @@ export function PlpRoute() {
       <header className="mb-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <a href="/" className="text-xl font-bold tracking-tight">
-            Shop
+            Product Shop
           </a>
         </div>
         <SearchBar

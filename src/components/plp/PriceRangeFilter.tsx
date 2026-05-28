@@ -19,17 +19,19 @@ function parseSelected(value: string | undefined, fallback: [number, number]): [
 }
 
 export function PriceRangeFilter({ facet, selected, onChange }: PriceRangeFilterProps) {
-  // If the facet uses bucketed values (low/high pairs) rather than a numeric range,
-  // derive min/max from the values list.
-  const fromValues = facet.values.reduce<{ min: number; max: number } | null>((acc, v) => {
-    if (v.low == null && v.high == null) return acc
-    const lo = v.low ?? acc?.min ?? Infinity
-    const hi = v.high ?? acc?.max ?? -Infinity
-    if (!acc) return { min: lo, max: hi }
-    return { min: Math.min(acc.min, lo), max: Math.max(acc.max, hi) }
-  }, null)
-  const min = Math.floor(facet.min ?? fromValues?.min ?? 0)
-  const max = Math.ceil(facet.max ?? fromValues?.max ?? 1000)
+
+  const lows = facet.values
+    .map((v) => v.low)
+    .filter((n): n is number => typeof n === 'number')
+  const highs = facet.values
+    .map((v) => v.high)
+    .filter((n): n is number => typeof n === 'number')
+  const hasOpenLow = facet.values.some((v) => v.low == null && v.high != null)
+  const derivedMin = hasOpenLow ? 0 : lows.length > 0 ? Math.min(...lows) : 0
+  const derivedMax = highs.length > 0 ? Math.max(...highs) : 1000
+
+  const min = Math.floor(facet.min ?? derivedMin)
+  const max = Math.ceil(facet.max ?? derivedMax)
   const step = facet.step ?? Math.max(1, Math.round((max - min) / 100))
   const [range, setRange] = useState<[number, number]>(() =>
     parseSelected(selected, [min, max]),

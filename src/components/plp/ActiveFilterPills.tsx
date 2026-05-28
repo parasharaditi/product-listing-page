@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import type { Facet } from '@/lib/api/types'
+import { formatPrice } from '@/lib/utils/format'
 
 export interface ActiveFilterPillsProps {
   filters: Record<string, string[]>
@@ -8,10 +9,28 @@ export interface ActiveFilterPillsProps {
   onClearAll: () => void
 }
 
+const PRICE_FIELDS = new Set(['price', 'final_price', 'sale_price'])
+const RANGE_RE = /^(-?\d+(?:\.\d+)?)?:(-?\d+(?:\.\d+)?)?$/
+
+function formatValue(field: string, value: string, fallback: string): string {
+  const match = RANGE_RE.exec(value)
+  if (!match) return fallback
+  const [, loRaw, hiRaw] = match
+  const isMoney = PRICE_FIELDS.has(field.toLowerCase())
+  const fmt = (s: string) => (isMoney ? formatPrice(Number(s)) : s)
+  if (loRaw && hiRaw) return `${fmt(loRaw)} – ${fmt(hiRaw)}`
+  if (loRaw) return `From ${fmt(loRaw)}`
+  if (hiRaw) return `Up to ${fmt(hiRaw)}`
+  return fallback
+}
+
 function labelFor(facets: Facet[], field: string, value: string) {
   const facet = facets.find((f) => f.field === field)
   const v = facet?.values.find((fv) => fv.value != null && fv.value === value)
-  return { fieldLabel: facet?.label ?? field, valueLabel: v?.label ?? value }
+  const fieldLabel = facet?.label ?? field
+  const fallback = v?.label ?? value
+  const valueLabel = formatValue(field, value, fallback)
+  return { fieldLabel, valueLabel }
 }
 
 export function ActiveFilterPills({
