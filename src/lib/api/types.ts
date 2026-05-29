@@ -1,6 +1,3 @@
-// Shape of the Searchspring search.json response we actually use.
-// Hand-written TS types (not generated). The normalizer in searchspring.ts
-// converts the API's numeric strings to numbers and fills sensible defaults.
 
 export interface Product {
   uid: string
@@ -15,7 +12,6 @@ export interface Product {
 }
 
 export interface FacetValue {
-  /** For list/swatch facets. Range buckets have low/high instead — we synthesize "low:high". */
   value?: string
   label?: string
   count?: number

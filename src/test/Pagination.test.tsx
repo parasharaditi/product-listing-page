@@ -21,7 +21,6 @@ describe('Pagination', () => {
 
   it('inserts ellipsis when total > 7 and current page is in the middle', () => {
     render(<Pagination page={10} totalPages={20} onPageChange={() => {}} />)
-    // Always shows first and last + a window around current (9, 10, 11).
     expect(screen.getByRole('button', { name: 'Go to page 1' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Go to page 20' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Go to page 10' })).toBeInTheDocument()
