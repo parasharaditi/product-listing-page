@@ -136,6 +136,25 @@ src/
 - **Switching view mode triggers a refetch** (different query key for the infinite cache). Acceptable; sharing cache between modes would add complexity for marginal gain.
 - **Wishlist stores full Product objects in `localStorage`** (not just UIDs), so the panel can render after navigating away. Trade-off: bigger storage payload, but well within the 5 MB cap.
 
+## CI
+
+GitHub Actions runs on every push to `main` and every pull request — see [`.github/workflows/ci.yml`](.github/workflows/ci.yml). In-flight runs for the same branch/PR are cancelled when new commits arrive.
+
+The pipeline runs four steps in order, on Ubuntu with Node 20:
+
+| Step | Command | What it catches |
+| --- | --- | --- |
+| Lint | `npm run lint` | ESLint errors (React hooks rules, TypeScript no-explicit-any, etc.) |
+| Typecheck | `npm run typecheck` | `tsc --noEmit` — strict TS errors not caught by ESLint |
+| Test | `npm test` | Vitest run of all unit/component tests |
+| Build | `npm run build` | Full production build (`tsc -b` + `vite build`) |
+
+Any step failing fails the job. To reproduce the exact CI run locally:
+
+```bash
+npm ci && npm run lint && npm run typecheck && npm test && npm run build
+```
+
 ## Tests
 
 ```bash
