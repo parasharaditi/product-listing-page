@@ -74,7 +74,7 @@ export function ResultsHeader({
             className={`flex h-full w-10 items-center justify-center transition-colors ${
               viewMode === 'pages'
                 ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                : 'hover:bg-black/5 dark:hover:bg-white/10'
+                : 'hover:bg-black/5'
             }`}
           >
             <List aria-hidden="true" className="h-4 w-4" />
@@ -87,7 +87,7 @@ export function ResultsHeader({
             className={`flex h-full w-10 items-center justify-center transition-colors ${
               viewMode === 'infinite'
                 ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                : 'hover:bg-black/5 dark:hover:bg-white/10'
+                : 'hover:bg-black/5'
             }`}
           >
             <InfinityIcon aria-hidden="true" className="h-4 w-4" />

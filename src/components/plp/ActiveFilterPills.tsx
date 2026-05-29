@@ -53,7 +53,7 @@ export function ActiveFilterPills({
             key={`${field}:${value}`}
             type="button"
             onClick={() => onRemove(field, value)}
-            className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1 text-xs transition-colors hover:bg-black/5 dark:hover:bg-white/10"
+            className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1 text-xs transition-colors hover:bg-black/5"
             aria-label={`Remove filter ${fieldLabel}: ${valueLabel}`}
           >
             <span className="text-[var(--color-muted)]">{fieldLabel}:</span>

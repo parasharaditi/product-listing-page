@@ -31,7 +31,7 @@ export default function FilterDrawer({
               <button
                 type="button"
                 aria-label="Close filters"
-                className="rounded p-1 hover:bg-black/5 dark:hover:bg-white/10"
+                className="rounded p-1 hover:bg-black/5"
               >
                 <X aria-hidden="true" className="h-4 w-4" />
               </button>

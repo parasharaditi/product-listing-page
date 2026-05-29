@@ -31,7 +31,7 @@ export function Pagination({
   const nextDisabled = page >= totalPages
 
   const btn =
-    'inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-[var(--color-border)] px-3 text-sm transition-colors hover:bg-black/5 dark:hover:bg-white/10'
+    'inline-flex h-9 min-w-9 items-center justify-center rounded-md border border-[var(--color-border)] px-3 text-sm transition-colors hover:bg-black/5'
   const disabledBtn = 'opacity-40 pointer-events-none'
   const currentBtn =
     'bg-[var(--color-accent)] text-[var(--color-accent-fg)] border-[var(--color-accent)]'

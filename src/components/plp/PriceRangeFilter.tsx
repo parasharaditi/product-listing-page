@@ -60,7 +60,7 @@ export function PriceRangeFilter({ facet, selected, onChange }: PriceRangeFilter
         className="relative flex h-5 w-full items-center"
         aria-label="Price range"
       >
-        <Slider.Track className="relative h-1 w-full grow rounded-full bg-black/10 dark:bg-white/15">
+        <Slider.Track className="relative h-1 w-full grow rounded-full bg-black/10">
           <Slider.Range className="absolute h-full rounded-full bg-[var(--color-accent)]" />
         </Slider.Track>
         <Slider.Thumb

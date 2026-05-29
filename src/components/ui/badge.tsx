@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react'
 
 const variantStyles = {
-  default: 'bg-black/10 text-[var(--color-fg)] dark:bg-white/10',
+  default: 'bg-black/10 text-[var(--color-fg)]',
   sale: 'bg-[var(--color-sale)] text-white',
   outline: 'border border-[var(--color-border)]',
 }

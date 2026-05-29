@@ -16,7 +16,7 @@ function toValue(opt: SortOption): string {
 }
 
 export function SortDropdown({ value, options, onChange }: SortDropdownProps) {
-  // Radix Select disallows empty-string values; route "" through a sentinel.
+
   const selectValue = value === '' ? DEFAULT_VALUE : value
   return (
     <Select.Root
@@ -25,7 +25,7 @@ export function SortDropdown({ value, options, onChange }: SortDropdownProps) {
     >
       <Select.Trigger
         aria-label="Sort by"
-        className="inline-flex h-10 items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm hover:bg-black/5 dark:hover:bg-white/10"
+        className="inline-flex h-10 items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 text-sm hover:bg-black/5"
       >
         <span className="text-[var(--color-muted)]">Sort:</span>
         <Select.Value placeholder="Relevance" />
@@ -42,7 +42,7 @@ export function SortDropdown({ value, options, onChange }: SortDropdownProps) {
           <Select.Viewport className="p-1">
             <Select.Item
               value={DEFAULT_VALUE}
-              className="relative flex cursor-pointer select-none items-center gap-2 rounded px-7 py-1.5 text-sm outline-none data-[highlighted]:bg-black/5 dark:data-[highlighted]:bg-white/10"
+              className="relative flex cursor-pointer select-none items-center gap-2 rounded px-7 py-1.5 text-sm outline-none data-[highlighted]:bg-black/5"
             >
               <Select.ItemIndicator className="absolute left-2">
                 <Check aria-hidden="true" className="h-3.5 w-3.5" />
@@ -55,7 +55,7 @@ export function SortDropdown({ value, options, onChange }: SortDropdownProps) {
                 <Select.Item
                   key={v}
                   value={v}
-                  className="relative flex cursor-pointer select-none items-center gap-2 rounded px-7 py-1.5 text-sm outline-none data-[highlighted]:bg-black/5 dark:data-[highlighted]:bg-white/10"
+                  className="relative flex cursor-pointer select-none items-center gap-2 rounded px-7 py-1.5 text-sm outline-none data-[highlighted]:bg-black/5"
                 >
                   <Select.ItemIndicator className="absolute left-2">
                     <Check aria-hidden="true" className="h-3.5 w-3.5" />

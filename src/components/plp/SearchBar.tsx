@@ -84,7 +84,7 @@ export function SearchBar({
             type="button"
             onClick={clear}
             aria-label="Clear search"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[var(--color-muted)] hover:bg-black/5 dark:hover:bg-white/10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[var(--color-muted)] hover:bg-black/5"
           >
             <X aria-hidden="true" className="h-4 w-4" />
           </button>

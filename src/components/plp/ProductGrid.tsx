@@ -6,9 +6,17 @@ export interface ProductGridProps {
   products: Product[]
   loading?: boolean
   loadingCount?: number
+  isWishlisted?: (uid: string) => boolean
+  onToggleWishlist?: (product: Product) => void
 }
 
-export function ProductGrid({ products, loading, loadingCount = 12 }: ProductGridProps) {
+export function ProductGrid({
+  products,
+  loading,
+  loadingCount = 12,
+  isWishlisted,
+  onToggleWishlist,
+}: ProductGridProps) {
   return (
     <ul
       role="list"
@@ -23,7 +31,11 @@ export function ProductGrid({ products, loading, loadingCount = 12 }: ProductGri
           ))
         : products.map((p) => (
             <li key={p.uid}>
-              <ProductCard product={p} />
+              <ProductCard
+                product={p}
+                isWishlisted={isWishlisted?.(p.uid)}
+                onToggleWishlist={onToggleWishlist}
+              />
             </li>
           ))}
     </ul>

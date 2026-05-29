@@ -12,10 +12,13 @@ import { ResultsAnnouncer } from '@/components/plp/ResultsAnnouncer'
 import { LoadMoreTrigger } from '@/components/plp/LoadMoreTrigger'
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery'
 import { useViewMode } from '@/lib/hooks/useViewMode'
+import { useWishlist } from '@/lib/hooks/useWishlist'
 import { useSearchState, RESULTS_PER_PAGE } from '@/lib/hooks/useSearchState'
 import { searchProducts } from '@/lib/api/searchspring'
+import { Heart } from 'lucide-react'
 
 const FilterDrawer = lazy(() => import('@/components/plp/FilterDrawer'))
+const WishlistPanel = lazy(() => import('@/components/plp/WishlistPanel'))
 
 export function PlpRoute() {
   const {
@@ -74,6 +77,8 @@ export function PlpRoute() {
 
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [wishlistOpen, setWishlistOpen] = useState(false)
+  const wishlist = useWishlist()
   const resultsTopRef = useRef<HTMLDivElement>(null)
   const firstLoadDone = useRef(false)
 
@@ -135,6 +140,22 @@ export function PlpRoute() {
           <a href="/" className="text-xl font-bold tracking-tight">
             Product Shop
           </a>
+          <button
+            type="button"
+            onClick={() => setWishlistOpen(true)}
+            aria-label={`Open wishlist, ${wishlist.count} items`}
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--color-border)] transition-colors hover:bg-black/5"
+          >
+            <Heart aria-hidden="true" className="h-4 w-4" />
+            {wishlist.count > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--color-sale)] px-1 text-[10px] font-semibold text-white"
+              >
+                {wishlist.count}
+              </span>
+            )}
+          </button>
         </div>
         <SearchBar
           initialValue={state.q}
@@ -211,7 +232,12 @@ export function PlpRoute() {
             />
           ) : (
             <div className={isRefetching ? 'opacity-70 transition-opacity' : ''}>
-              <ProductGrid products={products} loading={showInitialLoading} />
+              <ProductGrid
+                products={products}
+                loading={showInitialLoading}
+                isWishlisted={wishlist.isInWishlist}
+                onToggleWishlist={wishlist.toggle}
+              />
             </div>
           )}
 
@@ -234,6 +260,16 @@ export function PlpRoute() {
           )}
         </main>
       </div>
+
+      <Suspense fallback={null}>
+        <WishlistPanel
+          open={wishlistOpen}
+          onOpenChange={setWishlistOpen}
+          items={wishlist.items}
+          onRemove={wishlist.remove}
+          onClear={wishlist.clear}
+        />
+      </Suspense>
 
       {!isDesktop && (
         <Suspense fallback={null}>
