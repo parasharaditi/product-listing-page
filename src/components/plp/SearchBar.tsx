@@ -7,7 +7,6 @@ import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue'
 export interface SearchBarProps {
   initialValue: string
   onSubmit: (q: string) => void
-  /** Optional debounced live-search callback. */
   onLiveChange?: (q: string) => void
   debounceMs?: number
 }
@@ -20,13 +19,16 @@ export function SearchBar({
 }: SearchBarProps) {
   const id = useId()
   const [value, setValue] = useState(initialValue)
+  const [prevInitial, setPrevInitial] = useState(initialValue)
   const debounced = useDebouncedValue(value, debounceMs)
   const lastSentRef = useRef(initialValue)
   const submittedRef = useRef(false)
 
-  // Sync from external URL changes (e.g. browser back).
-  useEffect(() => {
+  if (initialValue !== prevInitial) {
+    setPrevInitial(initialValue)
     setValue(initialValue)
+  }
+  useEffect(() => {
     lastSentRef.current = initialValue
   }, [initialValue])
 

@@ -35,7 +35,6 @@ export function PlpRoute() {
   const [viewMode, setViewMode] = useViewMode()
   const isInfinite = viewMode === 'infinite'
 
-  // Paginated mode: one query per page.
   const pagedQuery = useQuery({
     queryKey: ['products', state],
     queryFn: ({ signal }) =>
@@ -48,8 +47,6 @@ export function PlpRoute() {
     enabled: !isInfinite,
   })
 
-  // Infinite mode: one cache entry per query/sort/filters; pages accumulate.
-  // Page number is excluded from the key — fetchNextPage drives it instead.
   const infiniteQuery = useInfiniteQuery({
     queryKey: ['products-infinite', { q: state.q, sort: state.sort, filters: state.filters }],
     queryFn: ({ pageParam, signal }) =>
@@ -66,7 +63,6 @@ export function PlpRoute() {
     enabled: isInfinite,
   })
 
-  // Unify the two shapes into a single view model so the JSX below doesn't branch.
   const query = isInfinite ? infiniteQuery : pagedQuery
   const data = isInfinite
     ? infiniteQuery.data?.pages[0]
@@ -82,9 +78,7 @@ export function PlpRoute() {
   const resultsTopRef = useRef<HTMLDivElement>(null)
   const firstLoadDone = useRef(false)
 
-  // Facets we never want to surface in the UI (Searchspring returns more than we want to show).
   const HIDDEN_FACETS = new Set(['condition', 'color'])
-  // Display-name overrides — `color_family` is the swatch-friendly grouped color; we surface it as plain "Color".
   const FACET_LABELS: Record<string, string> = { color_family: 'Color' }
   const facets = (data?.facets ?? [])
     .filter((f) => !HIDDEN_FACETS.has(f.field))
@@ -93,7 +87,6 @@ export function PlpRoute() {
   const totalResults = data?.pagination.totalResults ?? 0
   const totalPages = data?.pagination.totalPages ?? 0
 
-  // Page clamping only matters in paginated mode.
   useEffect(() => {
     if (isInfinite || !data) return
     if (totalPages > 0 && state.page > totalPages) {
@@ -101,14 +94,12 @@ export function PlpRoute() {
     }
   }, [isInfinite, data, totalPages, state.page, setPage])
 
-  // Document title reflects current query + count.
   useEffect(() => {
     const base = state.q ? `"${state.q}"` : 'All products'
     const suffix = data ? ` — ${totalResults} results` : ''
     document.title = `${base}${suffix} | Shop`
   }, [state.q, totalResults, data])
 
-  // Scroll to top of results on page change (paginated mode only).
   useEffect(() => {
     if (isInfinite) return
     if (!firstLoadDone.current) {

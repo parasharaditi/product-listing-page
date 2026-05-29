@@ -3,10 +3,6 @@ import type { Product } from '@/lib/api/types'
 
 const KEY = 'plp.wishlist'
 
-/**
- * We store full Product objects (not just uids) so the wishlist panel can render
- * cards even after the user navigates away from the search that surfaced them.
- */
 type WishlistMap = Record<string, Product>
 
 function read(): WishlistMap {
@@ -23,14 +19,13 @@ function write(map: WishlistMap) {
   try {
     localStorage.setItem(KEY, JSON.stringify(map))
   } catch {
-    /* quota exceeded — fail silently; wishlist is non-critical */
+    // empty
   }
 }
 
 export function useWishlist() {
   const [items, setItems] = useState<WishlistMap>(read)
 
-  // Keep tabs in sync — if the user adds an item in another tab, this tab updates too.
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === KEY) setItems(read())

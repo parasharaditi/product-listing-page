@@ -1,4 +1,4 @@
-import type { Facet, FacetValue, Product, SearchResponse } from './types'
+import type { Facet, FacetValue, Product, SearchResponse, SortOption } from './types'
 
 const BASE_URL = 'https://api.searchspring.net/api/search/search.json'
 const SITE_ID = 'scmq7n'
@@ -7,9 +7,7 @@ export type SearchParams = {
   q?: string
   page?: number
   resultsPerPage?: number
-  /** "<field>:<asc|desc>" — matches the API's own sorting.options. Empty = catalog default. */
   sort?: string
-  /** filter.<field> => string[]. Range values use "low:high" form. */
   filters?: Record<string, string[]>
 }
 
@@ -35,7 +33,6 @@ export function buildSearchUrl(params: SearchParams): string {
     for (const [field, values] of Object.entries(params.filters)) {
       for (const v of values) {
         if (!v) continue
-        // Range filters stored as "low:high" → Searchspring expects .low / .high.
         const range = /^(-?\d+(?:\.\d+)?)?:(-?\d+(?:\.\d+)?)?$/.exec(v)
         if (range) {
           const [, lo, hi] = range
@@ -51,10 +48,7 @@ export function buildSearchUrl(params: SearchParams): string {
   return url.toString()
 }
 
-// --- Normalizer ---------------------------------------------------------
-// The API returns numeric strings ("22"), booleans as 0/1, and bucketed
-// facet values with `low`/`high` but no `value`. Coerce here so downstream
-// code sees clean typed data.
+
 
 function num(v: unknown): number | undefined {
   if (typeof v === 'number') return Number.isFinite(v) ? v : undefined
@@ -69,7 +63,13 @@ function str(v: unknown): string | undefined {
   return typeof v === 'string' ? v : undefined
 }
 
-function normalizeProduct(raw: any): Product {
+type Raw = Record<string, unknown>
+
+function isObject(v: unknown): v is Raw {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+function normalizeProduct(raw: Raw): Product {
   return {
     uid: String(raw.uid ?? raw.id ?? ''),
     name: str(raw.name) ?? 'Untitled product',
@@ -83,7 +83,7 @@ function normalizeProduct(raw: any): Product {
   }
 }
 
-function normalizeFacetValue(raw: any): FacetValue {
+function normalizeFacetValue(raw: Raw): FacetValue {
   const low = num(raw.low)
   const high = num(raw.high)
   let value = raw.value != null ? String(raw.value) : undefined
@@ -101,30 +101,39 @@ function normalizeFacetValue(raw: any): FacetValue {
   }
 }
 
-function normalizeFacet(raw: any): Facet {
+function normalizeFacet(raw: Raw): Facet {
   return {
     field: String(raw.field),
     label: str(raw.label),
     type: (raw.type as Facet['type']) ?? 'list',
-    values: Array.isArray(raw.values) ? raw.values.map(normalizeFacetValue) : [],
+    values: Array.isArray(raw.values)
+      ? raw.values.filter(isObject).map(normalizeFacetValue)
+      : [],
     min: num(raw.min),
     max: num(raw.max),
     step: num(raw.step),
   }
 }
 
-function normalizeResponse(raw: any): SearchResponse {
+function normalizeResponse(raw: unknown): SearchResponse {
+  const root = isObject(raw) ? raw : {}
+  const pagination = isObject(root.pagination) ? root.pagination : {}
+  const sorting = isObject(root.sorting) ? root.sorting : {}
   return {
-    results: Array.isArray(raw?.results) ? raw.results.map(normalizeProduct) : [],
+    results: Array.isArray(root.results)
+      ? root.results.filter(isObject).map(normalizeProduct)
+      : [],
     pagination: {
-      totalResults: num(raw?.pagination?.totalResults) ?? 0,
-      currentPage: num(raw?.pagination?.currentPage) ?? 1,
-      perPage: num(raw?.pagination?.perPage) ?? 24,
-      totalPages: num(raw?.pagination?.totalPages) ?? 0,
+      totalResults: num(pagination.totalResults) ?? 0,
+      currentPage: num(pagination.currentPage) ?? 1,
+      perPage: num(pagination.perPage) ?? 24,
+      totalPages: num(pagination.totalPages) ?? 0,
     },
-    facets: Array.isArray(raw?.facets) ? raw.facets.map(normalizeFacet) : [],
+    facets: Array.isArray(root.facets)
+      ? root.facets.filter(isObject).map(normalizeFacet)
+      : [],
     sorting: {
-      options: Array.isArray(raw?.sorting?.options) ? raw.sorting.options : [],
+      options: Array.isArray(sorting.options) ? (sorting.options as SortOption[]) : [],
     },
   }
 }

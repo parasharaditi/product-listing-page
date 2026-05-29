@@ -18,7 +18,7 @@ function writeCollapseMap(map: Record<string, boolean>) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(map))
   } catch {
-    /* noop */
+    // empty
   }
 }
 

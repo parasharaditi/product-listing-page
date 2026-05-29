@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom'
 
 export const RESULTS_PER_PAGE = 24
 
-/** URL encodes sort as "<field>:<asc|desc>"; empty string = relevance/default. */
 export type SortValue = string
 
 export type SearchState = {

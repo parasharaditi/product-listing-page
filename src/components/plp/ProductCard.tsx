@@ -41,7 +41,6 @@ export function ProductCard({
           </div>
         ) : (
           <>
-            {/* Blur-up placeholder. Tiny image (the thumb) loads first, blurred. */}
             {thumb && (
               <img
                 src={thumb}
@@ -55,7 +54,6 @@ export function ProductCard({
                 }`}
               />
             )}
-            {/* Full-resolution image. Fades in once decoded; thumbnail shows through until then. */}
             {full && (
               <img
                 src={full}

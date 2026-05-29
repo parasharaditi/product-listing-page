@@ -17,7 +17,7 @@ export function useViewMode(): [ViewMode, (m: ViewMode) => void] {
     try {
       localStorage.setItem(KEY, mode)
     } catch {
-      /* noop */
+      /* empty */
     }
   }, [mode])
 

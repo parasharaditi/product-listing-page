@@ -1,12 +1,11 @@
 import * as Slider from '@radix-ui/react-slider'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import type { Facet } from '@/lib/api/types'
 import { formatPrice } from '@/lib/utils/format'
 
 export interface PriceRangeFilterProps {
   facet: Facet
-  /** Selected value, e.g. "10:50" — matches Searchspring range filter convention. */
   selected: string | undefined
   onChange: (value: string | undefined) => void
 }
@@ -36,10 +35,12 @@ export function PriceRangeFilter({ facet, selected, onChange }: PriceRangeFilter
   const [range, setRange] = useState<[number, number]>(() =>
     parseSelected(selected, [min, max]),
   )
-
-  useEffect(() => {
+  const [prevSig, setPrevSig] = useState(`${selected ?? ''}|${min}|${max}`)
+  const sig = `${selected ?? ''}|${min}|${max}`
+  if (sig !== prevSig) {
+    setPrevSig(sig)
     setRange(parseSelected(selected, [min, max]))
-  }, [selected, min, max])
+  }
 
   if (max <= min) return null
 

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { ProductCardSkeleton } from './ProductCardSkeleton'
 
 export interface LoadMoreTriggerProps {
-  /** Called when the sentinel scrolls into view. Caller should fetch the next page. */
+  /** Called when the scrolls into view. Caller should fetch the next page. */
   onIntersect: () => void
   loading: boolean
   hasMore: boolean
